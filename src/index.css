@@ -1,19 +1,274 @@
 @import "tailwindcss";
 
-/* Reset and base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@theme {
+  --color-border: hsl(var(--border));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-card: hsl(var(--card));
 }
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  :root {
+    --background: 0 0% 98%;           /* Light gray background */
+    --foreground: 0 0% 15%;           /* Dark gray text */
+
+    --card: 0 0% 100%;                /* Pure white cards */
+    --border: 0 0% 85%;               /* Light gray border */
+
+    --primary: 177 55% 50%;           /* #4DB6AC - Teal primary */
+    --primary-foreground: 0 0% 100%;  /* White text on teal */
+
+    --secondary: 7 100% 69%;           /* #FF6F61 - Coral secondary */
+    --secondary-foreground: 0 0% 100%; /* White text on coral */
+
+    --accent: 36 100% 75%;            /* #FFCC80 - Peach accent */
+    --accent-foreground: 0 0% 15%;    /* Dark text on peach */
+  }
+
+  .dark {
+    --background: 0 0% 8%;            /* Dark gray background */
+    --foreground: 0 0% 92%;           /* Light gray text */
+
+    --card: 0 0% 12%;                 /* Dark gray cards */
+    --border: 0 0% 25%;               /* Medium gray border */
+
+    --primary: 177 68% 70%;           /* Brighter teal for dark mode */
+    --primary-foreground: 0 0% 100%;  /* White text on teal */
+
+    --secondary: 7 86% 75%;           /* Brighter coral for dark mode */
+    --secondary-foreground: 0 0% 100%; /* White text on coral */
+
+    --accent: 36 100% 80%;            /* Brighter peach for dark mode */
+    --accent-foreground: 0 0% 15%;    /* Dark text on peach */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
 #root {
-  min-height: 100vh;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-semibold transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:brightness-110 hover:scale-[1.02];
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:brightness-110 hover:scale-[1.02];
+  }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:brightness-110 hover:scale-[1.02];
+  }
+
+  .card {
+    @apply bg-card border border-border rounded-xl p-4 shadow-md;
+  }
+
+  .glass {
+    /* Fallback for browsers without backdrop-filter support */
+    background-color: hsl(var(--card) / 0.3);
+    
+    /* Modern browsers with backdrop-filter */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: hsl(var(--card) / 0.2);
+    border: 1px solid hsl(var(--border) / 0.2);
+    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.05);
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    @apply relative;
+    text-shadow: 0 0 10px rgba(77, 182, 172, 0.5); /* Teal glow */
+  }
+
+  .card-hover {
+    @apply transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .gradient-border {
+    @apply relative rounded-md;
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(45deg, hsl(var(--primary)), hsl(var(--accent))) border-box;
+  }
+  
+  .gradient-border-primary {
+    @apply relative rounded-md;
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary))) border-box;
+  }
+  
+  .gradient-border-rainbow {
+    @apply relative rounded-md;
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(90deg, #4DB6AC, #FF6F61, #FFCC80) border-box;
+  }
+  
+  .gradient-border-animated {
+    @apply relative rounded-md;
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                linear-gradient(45deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary))) border-box;
+    animation: gradient-rotate 3s linear infinite;
+  }
+  
+  @keyframes gradient-rotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  .fade-in {
+    animation: fade-in 0.7s ease-out forwards;
+  }
+
+  .fade-in-delay-1 {
+    animation: fade-in 0.7s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+
+  .fade-in-delay-2 {
+    animation: fade-in 0.7s ease-out 0.4s forwards;
+    opacity: 0;
+  }
+
+  .fade-in-delay-3 {
+    animation: fade-in 0.7s ease-out 0.6s forwards;
+    opacity: 0;
+  }
+
+  .fade-in-delay-4 {
+    animation: fade-in 0.7s ease-out 0.8s forwards;
+    opacity: 0;
+  }
+
+  .float {
+    animation: float 2s ease-in-out infinite;
+  }
+
+  .pulse-subtle {
+    animation: pulse-subtle 4s ease-in-out infinite;
+  }
+
+  .bounce-subtle {
+    animation: bounce-subtle 0.3s ease-out;
+  }
+
+  .click-bounce {
+    transition: transform 0.1s ease-out;
+  }
+
+  .click-bounce:active {
+    transform: scale(0.95);
+    transition: transform 0.05s ease-out;
+  }
+
+
+  /* Layout */
+  .section-spacing {
+    @apply mt-8 mb-12;
+  }
+
+  .scale-on-hover {
+    @apply transition-transform duration-300 hover:scale-[1.02];
+  }
+
+  .debug-border {
+    @apply border border-red-500;
+  }
+
+  .container-custom {
+    margin-inline: auto;
+    padding-inline: 2rem;
+
+    @media (width >= 640px) {
+      max-width: 640px;
+    }
+    @media (width >= 768px) {
+      max-width: 768px;
+    }
+    @media (width >= 1024px) {
+      max-width: 1024px;
+    }
+    @media (width >= 1280px) {
+      max-width: 1280px;
+    }
+    @media (width >= 1400px) {
+      max-width: 1400px;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes bounce-subtle {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.85);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
